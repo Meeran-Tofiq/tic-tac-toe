@@ -26,4 +26,43 @@ def Board
     def reset_board
         @board_state = Array.new(9)
     end
+
+    private
+    def check_for_win
+        diagonal = Array.new
+        win = Array.new(8)
+
+        @board_state.each_with_index do |row, i|
+            previous_mark = nil
+
+            row.each_with_index do |mark, j|
+                unless previous_mark
+                    previous_mark = mark
+                end
+                
+                if (i == j) || (i == 2 && j==0) || (i==0 && j==2) 
+                    diagonal.push(mark)
+                end
+
+                if !(mark == previous_mark)
+                    win[i] == false
+                elsif win[i] != false
+                    win[i] == true
+                end
+
+                previous_mark = mark
+            end
+
+            if win.includes?(true)
+                return row[0]
+            end
+
+        end
+
+        if (diagonal[0] == diagonal[2] && diagonal[2] == diagonal[4]) || (diagonal[1] == diagonal[2] && diagonal[2] == diagonal[3])
+            return diagonal[2]
+        end
+
+        
+    end
 end
