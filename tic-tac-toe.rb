@@ -63,6 +63,28 @@ def Board
             return diagonal[2]
         end
 
+        previous_mark = nil
+
+        0..2.each do |col|
+            0..2.each do |row|
+                unless previous_mark
+                    previous_mark == @board_state[row][col]
+                end
+
+                if @board_state[row][col] != previous_mark
+                    win[col+3] = false
+                elsif win[col+3] != false
+                    win[col+3] = true
+                end
+
+                previous_mark = mark
+            end
+               
+            if win.includes?(true)
+                return @board_state[row][col]
+            end
+        end 
         
+        return nil
     end
 end
