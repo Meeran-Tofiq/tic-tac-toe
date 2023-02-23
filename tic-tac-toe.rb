@@ -1,16 +1,27 @@
-def Game
+class Game
     @@player_score = 0
     @@computer_score = 0
     @@second_computer_score = 0
 
     def initialize
         current_board = Board.new
+        current_board.print_board
     end
 end
 
-def Board
+class Board
     def initialize
-        @board_state = Array.new(3) {Array.new(3)}
+        @board_state = Array.new(3) {Array.new(3) {" "}}
+    end
+
+    def print_board
+        @board_state.each_with_index do |row, i|
+            puts row[0] + "   |   " + row[1] + "   |   " + row[2]
+            
+            unless i == 2
+                puts "---------------------"
+            end
+        end
     end
 
     def add_mark(position, mark)
@@ -84,7 +95,9 @@ def Board
                 return @board_state[row][col]
             end
         end 
-        
+
         return nil
     end
 end
+
+game = Game.new
