@@ -17,7 +17,7 @@ class Board
     def print_board
         @board_state.each_with_index do |row, i|
             puts row[0] + "   |   " + row[1] + "   |   " + row[2]
-            
+
             unless i == 2
                 puts "---------------------"
             end
@@ -25,7 +25,7 @@ class Board
     end
 
     def add_mark(position, mark)
-        if !@board_state[position]
+        if @board_state[position] == " "
             @board_state[position] = mark
         else 
             puts "That position is taken, please choose another."
