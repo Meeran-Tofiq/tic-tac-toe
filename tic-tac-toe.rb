@@ -66,6 +66,14 @@ class Board
             end
         end
 
+        unless win
+            if @board_state[0][0] == @board_state[1][1] && @board_state[1][1] == @board_state[2][2]
+                win = true
+            else @board_state[0][2] == @board_state[1][1] && @board_state[1][1] == @board_state[2][0]
+                win = true
+            end
+        end
+
         return win
         
     end
@@ -74,6 +82,6 @@ end
 puts "Hello there!"
 game = Game.new
 board = Board.new
-board.board_state = [["o", "x", " "], ['x', 'x', 'x'], ['o', ' ', ' ']]
+board.board_state = [["o", "x", "x"], ['x', 'o', 'x'], ['x', 'x', 'o']]
 board.print_board
 puts board.check_for_win(0, 0, "o")
