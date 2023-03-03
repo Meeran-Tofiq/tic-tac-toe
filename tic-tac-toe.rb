@@ -10,6 +10,8 @@ class Game
 end
 
 class Board
+    attr_reader :board_state
+    attr_writer :board_state
     def initialize
         @board_state = Array.new(3) {Array.new(3) {" "}}
     end
@@ -24,9 +26,9 @@ class Board
         end
     end
 
-    def add_mark(position, mark)
-        if @board_state[position] == " "
-            @board_state[position] = mark
+    def add_mark(x, y, mark)
+        if @board_state[x][y] == " "
+            @board_state[x][y] = mark
         else 
             puts "That position is taken, please choose another."
         end
@@ -38,66 +40,40 @@ class Board
         @board_state = Array.new(9)
     end
 
-    private
-    def check_for_win
-        diagonal = Array.new
-        win = Array.new(8)
+    # private
+    def check_for_win(x, y, current_mark)
+        win = false
 
-        @board_state.each_with_index do |row, i|
-            previous_mark = nil
-
-            row.each_with_index do |mark, j|
-                unless previous_mark
-                    previous_mark = mark
-                end
-                
-                if (i == j) || (i == 2 && j==0) || (i==0 && j==2) 
-                    diagonal.push(mark)
-                end
-
-                if !(mark == previous_mark)
-                    win[i] == false
-                elsif win[i] != false
-                    win[i] == true
-                end
-
-                previous_mark = mark
+        @board_state[x].each do |mark|
+            if mark != current_mark
+                win = false
+                break
             end
 
-            if win.includes?(true)
-                return row[0]
-            end
-
+            win = true
         end
 
-        if (diagonal[0] == diagonal[2] && diagonal[2] == diagonal[4]) || (diagonal[1] == diagonal[2] && diagonal[2] == diagonal[3])
-            return diagonal[2]
+        unless win
+            @board_state.each do |row|
+                mark = row[y]
+
+                if mark != current_mark
+                    win = false
+                    break
+                end
+
+                win = true
+            end
         end
 
-        previous_mark = nil
-
-        0..2.each do |col|
-            0..2.each do |row|
-                unless previous_mark
-                    previous_mark == @board_state[row][col]
-                end
-
-                if @board_state[row][col] != previous_mark
-                    win[col+3] = false
-                elsif win[col+3] != false
-                    win[col+3] = true
-                end
-
-                previous_mark = mark
-            end
-               
-            if win.includes?(true)
-                return @board_state[row][col]
-            end
-        end 
-
-        return nil
+        return win
+        
     end
 end
 
+puts "Hello there!"
 game = Game.new
+board = Board.new
+board.board_state = [["o", "o", "o"], [' ', ' ', ' '], [' ', ' ', ' ']]
+board.print_board
+puts board.check_for_win(0, 0, "o")
