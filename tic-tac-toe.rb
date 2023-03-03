@@ -10,14 +10,17 @@ class Game
 end
 
 class Board
-    attr_reader :board_state
-    attr_writer :board_state
+
     def initialize
-        @board_state = Array.new(3) {Array.new(3) {" "}}
+        @@board_state = Array.new(3) {Array.new(3) {" "}}
+    end
+
+    def self.board_state=board_stt 
+        @@board_state = board_stt
     end
 
     def print_board
-        @board_state.each_with_index do |row, i|
+        @@board_state.each_with_index do |row, i|
             puts row[0] + "   |   " + row[1] + "   |   " + row[2]
 
             unless i == 2
@@ -27,24 +30,24 @@ class Board
     end
 
     def add_mark(x, y, mark)
-        if @board_state[x][y] == " "
-            @board_state[x][y] = mark
+        if @@board_state[x][y] == " "
+            @@board_state[x][y] = mark
         else 
             puts "That position is taken, please choose another."
         end
 
-        self.check_for_win
+        self.check_for_win(x, y, mark)
     end
 
     def reset_board
-        @board_state = Array.new(9)
+        @@board_state = Array.new(9)
     end
 
     # private
     def check_for_win(x, y, current_mark)
         win = false
 
-        @board_state[x].each do |mark|
+        @@board_state[x].each do |mark|
             if mark != current_mark
                 win = false
                 break
@@ -54,7 +57,7 @@ class Board
         end
 
         unless win
-            @board_state.each do |row|
+            @@board_state.each do |row|
                 mark = row[y]
 
                 if mark != current_mark
@@ -67,9 +70,9 @@ class Board
         end
 
         unless win
-            if @board_state[0][0] == @board_state[1][1] && @board_state[1][1] == @board_state[2][2]
+            if @@board_state[0][0] == @@board_state[1][1] && @@board_state[1][1] == @@board_state[2][2]
                 win = true
-            else @board_state[0][2] == @board_state[1][1] && @board_state[1][1] == @board_state[2][0]
+            else @@board_state[0][2] == @@board_state[1][1] && @@board_state[1][1] == @@board_state[2][0]
                 win = true
             end
         end
@@ -79,9 +82,25 @@ class Board
     end
 end
 
+class Player < Board
+    def initialize(mark, first)
+        @mark = mark
+        @first = first
+    end
+
+    def add_mark(x, y)
+        super(x, y, @mark)
+    end
+end
+
 puts "Hello there!"
 game = Game.new
+player = Player.new("x", false)
 board = Board.new
-board.board_state = [["o", "x", "x"], ['x', 'o', 'x'], ['x', 'x', 'o']]
+
+Board.board_state = [["o", "x", " "], ['x', 'o', 'x'], ['x', 'x', 'o']]
+board.print_board
+player.add_mark(0, 0)
+player.add_mark(0, 2)
 board.print_board
 puts board.check_for_win(0, 0, "o")
