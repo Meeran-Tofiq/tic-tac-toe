@@ -74,6 +74,6 @@ end
 puts "Hello there!"
 game = Game.new
 board = Board.new
-board.board_state = [["o", "o", "o"], [' ', ' ', ' '], [' ', ' ', ' ']]
+board.board_state = [["o", "x", " "], ['x', 'x', 'x'], ['o', ' ', ' ']]
 board.print_board
 puts board.check_for_win(0, 0, "o")
