@@ -39,6 +39,17 @@ class Board
         self.check_for_win(x, y, mark)
     end
 
+    def self.get_empty_spots
+        Board.board_state.reduce(Array.new) do |acc, row|
+            row.each do |col|
+                if col == " "
+                    acc.push([Board.board_state.index(row), col])
+                end
+            end
+            acc
+        end
+    end
+
     def reset_board
         @@board_state = Array.new(9)
     end
@@ -90,6 +101,14 @@ class Player < Board
 
     def add_mark(x, y)
         super(x, y, @mark)
+    end
+
+    def computer_select
+        arr = Board.get_empty_spots
+
+        pos = rand(arr.length())
+
+        add_mark(pos[0], pos[1])
     end
 end
 
