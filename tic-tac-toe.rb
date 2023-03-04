@@ -1,3 +1,5 @@
+require 'pry-byebug'
+
 class Game
     @@player_score = 0
     @@computer_score = 0
@@ -28,12 +30,11 @@ class Game
             while players_turn
                 position = prompt_player_position
 
-                state = player.add_mark(position[0], position[1])
-                if state.nil?
+                player_win = player.add_mark(position[0], position[1])
+                if player_win.nil?
                     next
-                elsif !state
-                    puts "You won!"
-                    return
+                elsif player_win
+                    break
                 else
                     break
                 end
@@ -44,6 +45,11 @@ class Game
 
             Board.print_board
             sleep 1
+
+            if player_win
+                puts "You won!"
+                break
+            end
         end
         
     end
@@ -87,19 +93,19 @@ end
 class Board
 
     def initialize
-        @@board_state = Array.new(3) {Array.new(3) {" "}}
+        @@board_player_win = Array.new(3) {Array.new(3) {" "}}
     end
 
-    def self.board_state=board_stt 
-        @@board_state = board_stt
+    def self.board_player_win=board_stt 
+        @@board_player_win = board_stt
     end
 
-    def self.board_state
-        return @@board_state
+    def self.board_player_win
+        return @@board_player_win
     end
 
     def print_board
-        @@board_state.each_with_index do |row, i|
+        @@board_player_win.each_with_index do |row, i|
             puts row[0] + "   |   " + row[1] + "   |   " + row[2]
 
             unless i == 2
@@ -109,7 +115,7 @@ class Board
     end
 
     def self.print_board
-        @@board_state.each_with_index do |row, i|
+        @@board_player_win.each_with_index do |row, i|
             puts row[0] + "   |   " + row[1] + "   |   " + row[2]
 
             unless i == 2
@@ -119,8 +125,8 @@ class Board
     end
 
     def add_mark(x, y, mark)
-        if @@board_state[x][y] == " "
-            @@board_state[x][y] = mark
+        if @@board_player_win[x][y] == " "
+            @@board_player_win[x][y] = mark
         else 
             puts "That position is taken, please choose another."
             return nil
@@ -130,10 +136,10 @@ class Board
     end
 
     def self.get_empty_spots
-        Board.board_state.reduce(Array.new) do |acc, row|
+        Board.board_player_win.reduce(Array.new) do |acc, row|
             row.each do |col|
                 if col == " "
-                    acc.push([Board.board_state.index(row), row.index(col)])
+                    acc.push([Board.board_player_win.index(row), row.index(col)])
                 end
             end
             acc
@@ -141,14 +147,14 @@ class Board
     end
 
     def reset_board
-        @@board_state = Array.new(3) {Array.new(3) {" "}}
+        @@board_player_win = Array.new(3) {Array.new(3) {" "}}
     end
 
     # private
     def check_for_win(x, y, current_mark)
         win = false
 
-        @@board_state[x].each do |mark|
+        @@board_player_win[x].each do |mark|
             if mark != current_mark
                 win = false
                 break
@@ -158,7 +164,7 @@ class Board
         end
 
         unless win
-            @@board_state.each do |row|
+            @@board_player_win.each do |row|
                 mark = row[y]
 
                 if mark != current_mark
@@ -171,10 +177,12 @@ class Board
         end
 
         unless win
-            if @@board_state[0][0] == @@board_state[1][1] && @@board_state[1][1] == @@board_state[2][2]
-                win = true
-            else @@board_state[0][2] == @@board_state[1][1] && @@board_state[1][1] == @@board_state[2][0]
-                win = true
+            if @@board_player_win[1][1] == current_mark
+                if @@board_player_win[0][0] == @@board_player_win[1][1] && @@board_player_win[1][1] == @@board_player_win[2][2] 
+                    win = true
+                elsif (@@board_player_win[0][2] == @@board_player_win[1][1]) && (@@board_player_win[1][1] == @@board_player_win[2][0])
+                    win = true
+                end
             end
         end
 
@@ -205,11 +213,4 @@ class Player < Board
 end
 
 puts "Hello there!"
-# game = Game.new
-player = Player.new("x")
-computer = Player.new("o")
-board = Board.new
-
-Board.board_state = [["o", "x", "o"], ['x', 'o', 'x'], ['x', 'x', 'o']]
-board.print_board
-puts board.check_for_win(0, 1, "x")
+game = Game.new
