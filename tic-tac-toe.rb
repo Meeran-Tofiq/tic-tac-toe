@@ -6,6 +6,38 @@ class Game
     def initialize
         current_board = Board.new
         current_board.print_board
+
+        play
+    end
+
+    def play
+        player_mark = promt_player_mark
+        player_first = prompt_player_first
+        computer_mark = player_mark == "o" ? "x" : "o"
+        player = Player.new(player_mark)
+        computer = Player.new(computer_mark)
+
+        while true
+            puts "player " + player_mark + "computer " + computer_mark
+            break
+        end
+    end
+
+    def promt_player_mark
+        puts "What mark do you want to have? (o or x)"
+        player_mark = gets.chomp.downcase
+
+        while !(player_mark == "o" || player_mark == "x") 
+            puts "Please choose either 1 or 2"
+            player_mark = gets.chomp
+        end
+
+        player_mark
+    end
+
+    def prompt_player_first
+        puts "Would you like to be first? (y/...)"
+        player_first = gets.chomp == "y" ? true : false
     end
 end
 
@@ -98,9 +130,8 @@ class Board
 end
 
 class Player < Board
-    def initialize(mark, first)
+    def initialize(mark)
         @mark = mark
-        @first = first
     end
 
     def add_mark(x, y)
@@ -121,8 +152,8 @@ end
 
 puts "Hello there!"
 game = Game.new
-player = Player.new("x", false)
-computer = Player.new("o", false)
+player = Player.new("x")
+computer = Player.new("o")
 board = Board.new
 
 Board.board_state = [["o", "x", " "], ['x', 'o', 'x'], ['x', 'x', 'o']]
