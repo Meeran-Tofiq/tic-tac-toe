@@ -51,7 +51,7 @@ class Board
     end
 
     def reset_board
-        @@board_state = Array.new(9)
+        @@board_state = Array.new(3) {Array.new(3) {" "}}
     end
 
     # private
