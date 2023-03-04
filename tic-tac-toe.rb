@@ -12,15 +12,40 @@ class Game
 
     def play
         player_mark = promt_player_mark
-        player_first = prompt_player_first
+        players_turn = prompt_player_first
+
         computer_mark = player_mark == "o" ? "x" : "o"
+        computers_turn = !players_turn
+
         player = Player.new(player_mark)
         computer = Player.new(computer_mark)
 
         while true
-            puts "player " + player_mark + "computer " + computer_mark
-            break
+            if computers_turn
+                computer.computer_select
+            end
+
+            while players_turn
+                position = prompt_player_position
+
+                state = player.add_mark(position[0], position[1])
+                if state.nil?
+                    next
+                elsif !state
+                    puts "You won!"
+                    return
+                else
+                    break
+                end
+            end
+            
+            players_turn = !players_turn
+            computers_turn = !computers_turn
+
+            Board.print_board
+            sleep 1
         end
+        
     end
 
     def promt_player_mark
@@ -38,6 +63,24 @@ class Game
     def prompt_player_first
         puts "Would you like to be first? (y/...)"
         player_first = gets.chomp == "y" ? true : false
+    end
+
+    def prompt_player_position
+        puts "Where would you like to put your mark? (1-9)"
+        pos = gets.chomp.to_i
+
+        while pos > 9 || pos < 1
+            puts "Please choose a viable position on the board"
+            pos = gets.chomp.to_i
+        end
+
+        if pos < 4
+            return [0, pos-1]
+        elsif pos < 7
+            return [1, pos-4]
+        else
+            return [2, pos-7]
+        end
     end
 end
 
@@ -65,11 +108,22 @@ class Board
         end
     end
 
+    def self.print_board
+        @@board_state.each_with_index do |row, i|
+            puts row[0] + "   |   " + row[1] + "   |   " + row[2]
+
+            unless i == 2
+                puts "---------------------"
+            end
+        end
+    end
+
     def add_mark(x, y, mark)
         if @@board_state[x][y] == " "
             @@board_state[x][y] = mark
         else 
             puts "That position is taken, please choose another."
+            return nil
         end
 
         self.check_for_win(x, y, mark)
@@ -130,6 +184,8 @@ class Board
 end
 
 class Player < Board
+    attr_reader :mark
+
     def initialize(mark)
         @mark = mark
     end
@@ -141,8 +197,6 @@ class Player < Board
     def computer_select
         arr = Board.get_empty_spots
 
-        p arr
-
         random = rand(arr.length())
         pos = arr[random]
 
@@ -151,13 +205,11 @@ class Player < Board
 end
 
 puts "Hello there!"
-game = Game.new
+# game = Game.new
 player = Player.new("x")
 computer = Player.new("o")
 board = Board.new
 
-Board.board_state = [["o", "x", " "], ['x', 'o', 'x'], ['x', 'x', 'o']]
+Board.board_state = [["o", "x", "o"], ['x', 'o', 'x'], ['x', 'x', 'o']]
 board.print_board
-computer.computer_select
-board.print_board
-puts board.check_for_win(0, 0, "o")
+puts board.check_for_win(0, 1, "x")
