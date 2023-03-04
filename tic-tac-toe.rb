@@ -19,6 +19,10 @@ class Board
         @@board_state = board_stt
     end
 
+    def self.board_state
+        return @@board_state
+    end
+
     def print_board
         @@board_state.each_with_index do |row, i|
             puts row[0] + "   |   " + row[1] + "   |   " + row[2]
@@ -43,7 +47,7 @@ class Board
         Board.board_state.reduce(Array.new) do |acc, row|
             row.each do |col|
                 if col == " "
-                    acc.push([Board.board_state.index(row), col])
+                    acc.push([Board.board_state.index(row), row.index(col)])
                 end
             end
             acc
@@ -106,7 +110,10 @@ class Player < Board
     def computer_select
         arr = Board.get_empty_spots
 
-        pos = rand(arr.length())
+        p arr
+
+        random = rand(arr.length())
+        pos = arr[random]
 
         add_mark(pos[0], pos[1])
     end
@@ -115,11 +122,11 @@ end
 puts "Hello there!"
 game = Game.new
 player = Player.new("x", false)
+computer = Player.new("o", false)
 board = Board.new
 
 Board.board_state = [["o", "x", " "], ['x', 'o', 'x'], ['x', 'x', 'o']]
 board.print_board
-player.add_mark(0, 0)
-player.add_mark(0, 2)
+computer.computer_select
 board.print_board
 puts board.check_for_win(0, 0, "o")
