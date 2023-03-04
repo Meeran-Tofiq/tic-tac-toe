@@ -23,10 +23,6 @@ class Game
         computer = Player.new(computer_mark)
 
         while true
-            if computers_turn
-                computer.computer_select
-            end
-
             while players_turn
                 position = prompt_player_position
 
@@ -39,6 +35,12 @@ class Game
                     break
                 end
             end
+
+            if computers_turn
+                if computer.computer_select
+                    computer_win = true
+                end
+            end
             
             players_turn = !players_turn
             computers_turn = !computers_turn
@@ -49,8 +51,15 @@ class Game
             if player_win
                 puts "You won!"
                 break
+            elsif computer_win
+                puts "You lost!"
+                break
+            elsif Board.get_empty_spots == []
+                puts "It's a draw!"
+                break
             end
         end
+        Board.reset_board
         
     end
 
@@ -137,6 +146,7 @@ class Board
 
     def self.get_empty_spots
         row_counter = 0
+        
         self.board_state.reduce(Array.new) do |acc, row|
             column_counter = 0
             row.each do |col|
@@ -151,7 +161,7 @@ class Board
         end
     end
 
-    def reset_board
+    def self.reset_board
         @@board_state = Array.new(3) {Array.new(3) {" "}}
     end
 
