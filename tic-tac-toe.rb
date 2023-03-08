@@ -13,6 +13,7 @@ class Game
     end
 
     def play
+        player_human = prompt_player_human
         player_mark = promt_player_mark
         players_turn = prompt_player_first
 
@@ -24,14 +25,22 @@ class Game
 
         while true
             while players_turn
-                position = prompt_player_position
+                if player_human
+                    position = prompt_player_position
 
-                player_win = player.add_mark(position[0], position[1])
-                if player_win.nil?
-                    next
-                elsif player_win
-                    break
+                    player_win = player.add_mark(position[0], position[1])
+                    if player_win.nil?
+                        next
+                    elsif player_win
+                        break
+                    else
+                        break
+                    end
                 else
+                    if player.computer_select
+                        player_win = true
+                    end
+
                     break
                 end
             end
@@ -61,6 +70,13 @@ class Game
         end
         Board.reset_board
         
+    end
+
+    def prompt_player_human
+        puts "Would you like to play yourself? Or pit two robots against each other? (y/...)"
+        player_human = gets.chomp.downcase == "y" ? true : false 
+
+        player_human
     end
 
     def promt_player_mark
